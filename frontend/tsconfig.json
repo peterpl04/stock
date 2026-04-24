@@ -15,5 +15,6 @@
     "./**/*.ts",
     "./**/*.tsx",
     "./**/*.js"
-  ]
+  ],
+  "extends": "expo/tsconfig.base"
 }
