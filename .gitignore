@@ -1,8 +1,5 @@
 # Dependencies
 node_modules/
-.env/
-frontend/.env/
-backentd/.env/
 frontend/node_modules/
 backend/node_modules/
 
@@ -24,8 +21,15 @@ yarn-error.log*
 # Environment
 .env
 .env.local
+.env.example
+*.env
+*.env.example
 frontend/.env
+frontend/.env.example
 backend/.env
+backend/.env.example
+**/.env
+**/.env.example
 
 # OS / editor
 .DS_Store
