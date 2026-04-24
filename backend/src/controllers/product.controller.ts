@@ -24,11 +24,13 @@ export const productController = {
   },
   async update(req: Request, res: Response) {
     const data = productSchema.parse(req.body);
-    const result = await productService.update(req.params.id, data);
+    const id = String(req.params.id);
+    const result = await productService.update(id, data);
     return res.status(200).json(result);
   },
   async remove(req: Request, res: Response) {
-    await productService.remove(req.params.id);
+    const id = String(req.params.id);
+    await productService.remove(id);
     return res.status(204).send();
   },
   async list(req: Request, res: Response) {
@@ -42,7 +44,8 @@ export const productController = {
     return res.status(200).json({ page, limit, ...result });
   },
   async getById(req: Request, res: Response) {
-    const item = await productService.findById(req.params.id);
+    const id = String(req.params.id);
+    const item = await productService.findById(id);
     if (!item) {
       return res.status(404).json({ message: "Produto nao encontrado" });
     }

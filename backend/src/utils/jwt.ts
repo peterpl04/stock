@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import { env } from "./env";
 
 type Payload = {
@@ -9,7 +9,7 @@ type Payload = {
 
 export function signToken(payload: Payload): string {
   return jwt.sign(payload, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN
+    expiresIn: env.JWT_EXPIRES_IN as SignOptions["expiresIn"]
   });
 }
 

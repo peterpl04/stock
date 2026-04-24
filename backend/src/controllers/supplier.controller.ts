@@ -17,11 +17,13 @@ export const supplierController = {
   },
   async update(req: Request, res: Response) {
     const data = schema.parse(req.body);
-    const result = await supplierService.update(req.params.id, data);
+    const id = String(req.params.id);
+    const result = await supplierService.update(id, data);
     return res.status(200).json(result);
   },
   async remove(req: Request, res: Response) {
-    await supplierService.remove(req.params.id);
+    const id = String(req.params.id);
+    await supplierService.remove(id);
     return res.status(204).send();
   },
   async list(req: Request, res: Response) {

@@ -15,11 +15,13 @@ export const categoryController = {
   },
   async update(req: Request, res: Response) {
     const { name } = schema.parse(req.body);
-    const result = await categoryService.update(req.params.id, name);
+    const id = String(req.params.id);
+    const result = await categoryService.update(id, name);
     return res.status(200).json(result);
   },
   async remove(req: Request, res: Response) {
-    await categoryService.remove(req.params.id);
+    const id = String(req.params.id);
+    await categoryService.remove(id);
     return res.status(204).send();
   },
   async list(req: Request, res: Response) {
