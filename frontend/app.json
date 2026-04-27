@@ -15,6 +15,7 @@
     ],
     "android": {
       "package": "com.latoestoque.app",
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "backgroundColor": "#0F141A"
       }

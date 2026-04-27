@@ -1,4 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import axios from "axios";
 import { useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 import { AppInput } from "../components/AppInput";
@@ -19,7 +20,12 @@ export function RegisterScreen({ navigation }: Props) {
     try {
       await dispatch(register({ name, email, password })).unwrap();
       navigation.goBack();
-    } catch {
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = (error.response?.data as { message?: string } | undefined)?.message;
+        Alert.alert("Erro", message || "Falha ao cadastrar");
+        return;
+      }
       Alert.alert("Erro", "Falha ao cadastrar");
     }
   }
