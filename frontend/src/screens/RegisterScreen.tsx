@@ -14,13 +14,16 @@ export function RegisterScreen({ navigation }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   async function onSubmit() {
     try {
+      setSubmitError(null);
       await dispatch(register({ name, email, password })).unwrap();
       navigation.goBack();
     } catch (error) {
       const message = error instanceof Error ? error.message : typeof error === "string" ? error : "Falha ao cadastrar";
+      setSubmitError(message);
       Alert.alert("Erro", message);
     }
   }
@@ -44,6 +47,10 @@ export function RegisterScreen({ navigation }: Props) {
       >
         <Text style={{ color: "#062314", fontWeight: "700" }}>{loading ? "Salvando..." : "Cadastrar"}</Text>
       </Pressable>
+
+      {submitError ? (
+        <Text style={{ color: "#ff8a8a", marginTop: 14, textAlign: "center", fontWeight: "600" }}>{submitError}</Text>
+      ) : null}
     </View>
   );
 }

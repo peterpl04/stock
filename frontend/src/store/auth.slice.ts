@@ -28,36 +28,45 @@ export const hydrateAuth = createAsyncThunk("auth/hydrate", async () => {
   };
 });
 
-export const login = createAsyncThunk("auth/login", async (payload: { email: string; password: string }) => {
-  try {
-    const result = await authService.login(payload);
-    await persistAuth(result);
-    return result;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const message = (error.response?.data as { message?: string } | undefined)?.message;
-      throw new Error(message || "Falha ao autenticar");
-    }
-    throw error;
+function getApiErrorMessage(error: unknown, fallback: string) {
+  if (axios.isAxiosError(error)) {
+    const data = error.response?.data as { message?: string; error?: string } | undefined;
+    return data?.message || data?.error || fallback;
   }
-});
 
-export const register = createAsyncThunk(
-  "auth/register",
-  async (payload: { name: string; email: string; password: string }) => {
+  if (error instanceof Error) {
+    return error.message || fallback;
+  }
+
+  return fallback;
+}
+
+export const login = createAsyncThunk<AuthResponse, { email: string; password: string }, { rejectValue: string }>(
+  "auth/login",
+  async (payload, thunkApi) => {
+    try {
+      const result = await authService.login(payload);
+      await persistAuth(result);
+      return result;
+    } catch (error) {
+      return thunkApi.rejectWithValue(getApiErrorMessage(error, "Falha ao autenticar"));
+    }
+  }
+);
+
+export const register = createAsyncThunk<
+  AuthResponse,
+  { name: string; email: string; password: string },
+  { rejectValue: string }
+>("auth/register", async (payload, thunkApi) => {
     try {
       const result = await authService.register(payload);
       await persistAuth(result);
       return result;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const message = (error.response?.data as { message?: string } | undefined)?.message;
-        throw new Error(message || "Falha ao cadastrar");
-      }
-      throw error;
+      return thunkApi.rejectWithValue(getApiErrorMessage(error, "Falha ao cadastrar"));
     }
-  }
-);
+  });
 
 async function persistAuth(result: AuthResponse) {
   await Promise.all([
