@@ -1,5 +1,4 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import axios from "axios";
 import { useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 import { AppInput } from "../components/AppInput";
@@ -19,12 +18,8 @@ export function LoginScreen({ navigation }: Props) {
     try {
       await dispatch(login({ email, password })).unwrap();
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const message = (error.response?.data as { message?: string } | undefined)?.message;
-        Alert.alert("Erro", message || "Falha ao autenticar");
-        return;
-      }
-      Alert.alert("Erro", "Falha ao autenticar");
+      const message = error instanceof Error ? error.message : typeof error === "string" ? error : "Falha ao autenticar";
+      Alert.alert("Erro", message);
     }
   }
 

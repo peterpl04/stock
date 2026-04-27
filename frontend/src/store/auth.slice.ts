@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 import { authService } from "../services/auth.service";
 import { AuthResponse, User } from "../types/api";
 
@@ -28,17 +29,33 @@ export const hydrateAuth = createAsyncThunk("auth/hydrate", async () => {
 });
 
 export const login = createAsyncThunk("auth/login", async (payload: { email: string; password: string }) => {
-  const result = await authService.login(payload);
-  await persistAuth(result);
-  return result;
+  try {
+    const result = await authService.login(payload);
+    await persistAuth(result);
+    return result;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const message = (error.response?.data as { message?: string } | undefined)?.message;
+      throw new Error(message || "Falha ao autenticar");
+    }
+    throw error;
+  }
 });
 
 export const register = createAsyncThunk(
   "auth/register",
   async (payload: { name: string; email: string; password: string }) => {
-    const result = await authService.register(payload);
-    await persistAuth(result);
-    return result;
+    try {
+      const result = await authService.register(payload);
+      await persistAuth(result);
+      return result;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = (error.response?.data as { message?: string } | undefined)?.message;
+        throw new Error(message || "Falha ao cadastrar");
+      }
+      throw error;
+    }
   }
 );
 
